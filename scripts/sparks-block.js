@@ -1,19 +1,4 @@
-/**
- * (c) Facebook, Inc. and its affiliates. Confidential and proprietary.
- */
 
-//==============================================================================
-// Welcome to scripting in Spark AR Studio! Helpful links:
-//
-// Scripting Basics - https://fb.me/spark-scripting-basics
-// Reactive Programming - https://fb.me/spark-reactive-programming
-// Scripting Object Reference - https://fb.me/spark-scripting-reference
-// Changelogs - https://fb.me/spark-changelog
-//
-// For projects created with v87 onwards, JavaScript is always executed in strict mode.
-//==============================================================================
-
-// How to load in modules
 const Scene = require('Scene');
 const Patches = require('Patches');
 
@@ -22,7 +7,7 @@ export const Diagnostics = require('Diagnostics');
 
 Scene.root.findFirst('canvas0').then(function (r) {
     const canvasBounds = r.bounds;
-    Patches.inputs.setScalar('bar_top', canvasBounds.height.mul(.7));
+    Patches.inputs.setScalar('bar_top_alt', canvasBounds.height.mul(.7));
     Patches.inputs.setScalar('horizontal_center', canvasBounds.width.mul(.5));
     Patches.inputs.setScalar('vertical_center', canvasBounds.height.mul(.5));
     const barWidthRatio = .2;
@@ -31,15 +16,15 @@ Scene.root.findFirst('canvas0').then(function (r) {
     Patches.inputs.setScalar('offset', canvasBounds.width.mul(barWidthRatio/-2));
     Scene.root.findFirst('positionTracker').then(function (result) {
         result.worldTransform.position.x.monitor().subscribe(function (value) {
-            // Diagnostics.log(value.newValue);
-            if(value.newValue > .05){
-                Diagnostics.log('left');
-            }
-            if(value.newValue < -.05){
-                Diagnostics.log('right');
-            }
             const barLeft = value.newValue;
             Patches.inputs.setScalar('bar_left', barLeft * -1000);
+        });
+    });
+    
+    Scene.root.findFirst('verticalTracker').then(function (result) {
+        result.worldTransform.position.y.monitor().subscribe(function (value) {
+            const barTop = value.newValue;
+            Patches.inputs.setScalar('bar_top', barTop * -1000);
         });
     });
 });
